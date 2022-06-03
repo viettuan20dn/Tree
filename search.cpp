@@ -1,6 +1,10 @@
 #include <iostream>
-#include <cmath>
+#include <math.h>
+#include <vector>
+#include <set>
+#include <map>
 #include <algorithm>
+#include <utility>
 using namespace std;
 
 int binarySearch(int arr[], int left, int right, int x)
@@ -45,30 +49,30 @@ int interpolationSearch(int arr[], int left, int right, int x)
 }
 int jumpSearch(int arr[], int x, int n)
 {
-    int k = 0; //index block
-    int m = sqrt(n); //block size
+    int k = 0;       // index block
+    int m = sqrt(n); // block size
     // index phan tu dau tien cua block "k*m" phai nho hon so phan tu "n"
     while (k * m < n)
     {
         cout << k * m << " "; // show first index of the block
         // condition: x > block 'k' va x <= block 'k+1'
         // special note: add case m*m< n and still not find yet.
-        if (arr[k * m] < x && ((k+1)*m >= n || x <= arr[(k+1)*m]))
+        if (arr[k * m] < x && ((k + 1) * m >= n || x <= arr[(k + 1) * m]))
         {
             // cases without in last block.
-            if (n > (k+1)*m)
+            if (n > (k + 1) * m)
             {
-                cout << ((k+1)*m) << " ";
-                //x= block 'k+1'
-                if (x == arr[(k+1)*m])
+                cout << ((k + 1) * m) << " ";
+                // x= block 'k+1'
+                if (x == arr[(k + 1) * m])
                 {
-                    return (k+1)*m;
+                    return (k + 1) * m;
                 }
             }
 
             // traverse linear block 'k'
             int i = 0;
-            for (i = k * m; i < min((k+1)*m, n); i++)
+            for (i = k * m; i < min((k + 1) * m, n); i++)
             {
                 if (i != k * m)
                     cout << i << " ";
@@ -84,21 +88,48 @@ int jumpSearch(int arr[], int x, int n)
     }
     return -1;
 }
+bool findPairs(int arr[], int n, pair<int, int> &pair1, pair<int, int> &pair2)
+{
+    // TODO: If there are two pairs satisfy the condition,
+    // TODO: assign their values to pair1, pair2 and return true. Otherwise, return false.
+    vector<pair<int,int>> pairList;
+    for (int i = 0; i < n-1; i++)
+    {
+        for (int t = i + 1; t < n; t++)
+        {
+            pair<int,int> pa;
+            pa.first=arr[i];
+            pa.second=arr[t];
+            pairList.push_back(pa);
+        }
+    }
+    map<int,int> mp;
+    
+    for (int i=0;i<pairList.size();i++)
+    {
+        pair<int,int> pa;
+        pa.first=i;
+        pa.second=pairList[i].first+pairList[i].second;
+        mp.insert(pa);
+    }
+    for (int i=0;i<pairList.size()-1;i++)
+    {
+        for (int j=i+1;j<pairList.size();j++)
+        {
+            if (mp[i]==mp[j])
+            {
+                pair1=pairList[i];
+                pair2=pairList[j];
+                return true;
+            }
+        }
+    }
+    return false;
+}
 int main()
 {
-
-    int arr[] = {0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 611, 612, 613, 1000, 1002, 2000, 2003, 2004, 2005, 2006};
-    int x = 36;
-    int n = sizeof(arr) / sizeof(arr[0]);
-    int index = jumpSearch(arr, x, n);
-
-    if (index != -1)
-    {
-        cout << "\nNumber " << x << " is at index " << index;
-    }
-    else
-    {
-        cout << "\n"
-             << x << " is not in array!";
-    }
+    int arr[] = {3, 4, 7, 1, 2, 9, 8};
+    int n = sizeof arr / sizeof arr[0];
+    pair<int, int> pair1, pair2;
+    findPairs(arr, n, pair1, pair2);
 }
